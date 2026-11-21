@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="mr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fff8f4" />
+    <title>तुझ्यासाठी — प्रेमळ साथ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#"><span class="brand-mark">♡</span><span>तुझ्यासाठी</span></a>
+        <nav class="nav-tabs" aria-label="मुख्य विभाग">
+          <button class="nav-tab active" data-section="today">आज</button>
+          <button class="nav-tab" data-section="breathe">श्वास</button>
+          <button class="nav-tab" data-section="videos">योगा</button>
+          <button class="nav-tab" data-section="habits">सवयी</button>
+          <button class="nav-tab" data-section="dietfriend">Diet Chart</button>
+          <button class="nav-tab" data-section="specialist">PCOD साथी</button>
+        </nav>
+        <button class="profile-button" id="profileButton" aria-label="प्रोफाइल"><span id="profileInitial">♡</span></button>
+      </header>
+
+      <section id="today" class="view active">
+        <div class="hero-grid">
+          <article class="affirmation-card glass-card">
+            <div class="card-kicker"><span class="spark">✦</span> आजचा सकारात्मक विचार</div>
+            <blockquote id="affirmation">“मी माझ्या शरीराची काळजी करते.<br />माझ्या प्रवासात मी पूर्णपणे पुरेशी आहे.”</blockquote>
+            <button class="round-arrow" id="nextAffirmation" aria-label="पुढचा विचार">→</button>
+          </article>
+          <article class="love-card">
+            <div class="love-orbit">
+              <span class="orbit-heart heart-a">♥</span><span class="orbit-heart heart-b">♥</span><span class="orbit-heart heart-c">♥</span>
+              <div class="love-illustration"><div class="face"><span class="eye left"></span><span class="eye right"></span><span class="smile"></span></div></div>
+            </div>
+            <div class="love-copy">
+              <span class="tiny-label">तुझ्याकडून, खास तिला</span>
+              <p>तू मज़बूत आहेस —<br />प्रत्येक दिवसातही, <em>तुझ्या शांत वेळेतही.</em></p>
+              <button class="soft-button" id="openMessage">एक खास संदेश <span>♡</span></button>
+            </div>
+          </article>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card" data-go="breathe">
+            <div class="feature-icon breath-icon"><span></span><span></span><span></span></div>
+            <div><span class="feature-label">शांतता</span><h3>4-7-8 श्वसन</h3><p>चार शांत चक्रांनी ताणाला विराम द्या</p></div>
+            <button class="feature-arrow" aria-label="श्वसन सुरुवात करा">→</button>
+          </article>
+          <article class="feature-card" id="gameCard">
+            <div class="feature-icon flower-icon">✿</div>
+            <div><span class="feature-label">छोटा ब्रेक</span><h3>फुलांचा खेळ</h3><p>फुलं टिपा आणि काळजी हलकी करा</p></div>
+            <button class="feature-arrow" id="openGame" aria-label="खेळ सुरू करा">→</button>
+          </article>
+          <article class="feature-card hammer-card" id="hammerCard">
+            <div class="feature-icon hammer-icon">🔨</div>
+            <div><span class="feature-label">भावना सोडूया</span><h3>ताणावर प्रहार</h3><p>काळजीचे शब्द फोडून हलकं व्हा</p></div>
+            <button class="feature-arrow" id="openHammerGame" aria-label="हातोडा खेळ सुरू करा">→</button>
+          </article>
+        </div>
+      </section>
+
+      <section id="breathe" class="view">
+        <div class="section-heading"><div><span class="eyebrow">शांत क्षण</span><h1>हळू श्वास घ्या</h1></div><p>खाली बसा, वर्तुळाच्या गतीनुसार श्वास घ्या.</p></div>
+        <div class="breathe-layout">
+          <div class="breath-stage">
+            <div class="breath-rings"><div class="breath-ball" id="breathBall"><div class="breath-readout"><span id="breathPhase">तयार</span><strong id="breathCount">4</strong></div></div></div>
+            <div class="breath-meta"><span id="breathRound">चक्र ० / ४</span><span class="breath-pattern">4 सेकंद घ्या • 7 सेकंद रोखा • 8 सेकंद सोडा</span></div>
+          </div>
+          <aside class="breath-panel"><h3>4-7-8 तंत्र</h3><p class="breath-help">शांतपणे बसा. एकदा चक्र सुरू झाल्यावर पुढील सूचना आणि सेकंद स्वतः बदलतील.</p><ol><li data-phase="inhale"><b>4 सेकंद</b><span>हळूहळू नाकाने श्वास घ्या</span></li><li data-phase="hold"><b>7 सेकंद</b><span>श्वास शांतपणे आत रोखा</span></li><li data-phase="exhale"><b>8 सेकंद</b><span>तोंडाने हळू श्वास बाहेर टाका</span></li></ol><button class="primary-button" id="breathStart">व्यायाम सुरू करा</button></aside>
+        </div>
+      </section>
+
+      <section id="videos" class="view">
+        <div class="section-heading"><div><span class="eyebrow">हलकेपणा पाहा</span><h1>तुझा शांत क्षण</h1></div><p>आरोग्याची दखल घे आणि स्वतःसाठी वेळ ठेवा.</p></div>
+        <div class="video-grid">
+          <a class="video-card" href="https://www.youtube.com/results?search_query=gentle+pcos+yoga+marathi" target="_blank" rel="noreferrer"><div class="video-thumb thumb-one"><span class="play">▶</span></div><div class="video-meta"><span>योगा • १० मिनिटे</span><h3>हलक्या हालचालींनी दिवसाला सुरुवात करा</h3></div></a>
+          <a class="video-card" href="https://www.youtube.com/results?search_query=guided+meditation+marathi+stress" target="_blank" rel="noreferrer"><div class="video-thumb thumb-two"><span class="play">▶</span></div><div class="video-meta"><span>मेडिटेशन • ५ मिनिटे</span><h3>तुझ्या मनाला प्रेमाने सांभाळा</h3></div></a>
+          <a class="video-card" href="https://www.youtube.com/results?search_query=gentle+stretching+for+wellness" target="_blank" rel="noreferrer"><div class="video-thumb thumb-three"><span class="play">▶</span></div><div class="video-meta"><span>स्ट्रेचिंग • ८ मिनिटे</span><h3>शरीरासाठी सौम्य वाकणे</h3></div></a>
+        </div>
+      </section>
+
+      <section id="habits" class="view">
+        <div class="section-heading tracker-heading"><div><span class="eyebrow">दैनिक आरोग्य नोंद</span><h1>आजची स्वतःची काळजी</h1></div><p id="trackerDateLabel"></p></div>
+        <div class="tracker-layout">
+          <aside class="calendar-card">
+            <div class="calendar-top"><button id="calendarPrev" aria-label="मागील महिन्याचा">‹</button><h3 id="calendarTitle"></h3><button id="calendarNext" aria-label="पुढील महिन्याचा">›</button></div>
+            <div class="calendar-weekdays"><span>आ</span><span>सो</span><span>मं</span><span>बु</span><span>गु</span><span>शु</span><span>श</span></div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+            <div class="calendar-summary"><span id="calendarFilled">० दिवस नोंदलेले</span><b id="trackerPercent">०%</b></div>
+          </aside>
+          <div class="tracker-main">
+            <div class="tracker-toolbar">
+              <label><span>दिनांक निवडा</span><input id="trackerDate" type="date" /></label>
+              <div class="tracker-actions"><div class="save-status" id="saveStatus">• तयार आहे</div><button class="export-button" id="exportTracker" type="button">Excel डाउनलोड ↓</button></div>
+            </div>
+            <div class="daily-fields">
+              <article class="daily-card water-card">
+                <div class="daily-icon">💧</div><div class="daily-content"><label for="waterInput">पाणी पिणे</label><p>आज किती लिटर पाणी प्यालस?</p></div>
+                <div class="number-control"><button type="button" data-step="waterInput" data-change="-0.25">−</button><input id="waterInput" type="number" min="0" max="10" step="0.25" value="0" /><button type="button" data-step="waterInput" data-change="0.25">+</button><span>लीटर</span></div>
+              </article>
+              <article class="daily-card">
+                <div class="daily-icon">🌤️</div><div class="daily-content"><label for="breakfastInput">नाश्ता केला का?</label><p>नाश्त्यात काय खाल्लंस ते लिही</p></div>
+                <input class="text-field" id="breakfastInput" type="text" placeholder="उदा. ओट्स आणि फळे" />
+              </article>
+              <article class="daily-card">
+                <div class="daily-icon">🧘</div><div class="daily-content"><label for="exerciseInput">व्यायाम केला का?</label><p>योगा किंवा व्यायामाचे एकूण वेळ</p></div>
+                <div class="number-control"><input id="exerciseInput" type="number" min="0" max="600" step="5" value="0" /><span>मिनिटे</span></div>
+              </article>
+              <article class="daily-card">
+                <div class="daily-icon">🥗</div><div class="daily-content"><label for="lunchInput">दुपारचे जेवण</label><p>लंचमध्ये काय खाल्लंस?</p></div>
+                <input class="text-field" id="lunchInput" type="text" placeholder="उदा. भात, भाजी आणि डाळ" />
+              </article>
+              <article class="daily-card">
+                <div class="daily-icon">🌙</div><div class="daily-content"><label for="dinnerInput">रात्रीचे जेवण</label><p>डिनरमध्ये काय खाल्लंस?</p></div>
+                <input class="text-field" id="dinnerInput" type="text" placeholder="उदा. रोटी आणि पनीर भाजी" />
+              </article>
+              <article class="daily-card">
+                <div class="daily-icon">👟</div><div class="daily-content"><label for="walkInput">हलकी चालणे</label><p>आज किती steps चाललीस?</p></div>
+                <div class="number-control"><input id="walkInput" type="number" min="0" max="50000" step="100" value="0" /><span>Steps</span></div>
+              </article>
+            </div>
+            <div class="submit-row">
+              <div><b id="submitCount">० / ६ पूर्ण</b><span id="submitHint">आजच्या सर्व नोंदी पूर्ण झाल्यावर submit करा</span></div>
+              <button class="submit-button" id="submitTracker" type="button">आजचा दिवस Submit करा ✓</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="dietfriend" class="view">
+        <div class="section-heading"><div><span class="eyebrow">आजचा पौष्टिक चार्ट</span><h1>मला काय आणि किती खायचे?</h1></div><p>तुझ्या प्लेटसाठी smart daily estimate</p></div>
+        <div class="diet-layout">
+          <aside class="diet-side">
+            <div class="diet-avatar">🥗</div>
+            <h3>आजची plate</h3>
+            <p>अन्न निवड आणि सर्व्हिंग वाढवा. Nutrition अपनेआप calculate होईल.</p>
+            <div class="goal-grid">
+              <div><span>Calorie</span><b id="calorieGoal">1800 kcal</b></div>
+              <div><span>Protein</span><b id="proteinGoal">75 g</b></div>
+              <div><span>Fiber</span><b id="fiberGoal">25 g</b></div>
+            </div>
+            <label class="goal-input">Daily calorie लक्ष्य
+              <input id="dietCalorieGoal" type="number" min="1000" max="3000" step="50" value="1800" />
+            </label>
+          </aside>
+          <div class="diet-main">
+            <div class="diet-toolbar">
+              <div class="diet-categories" id="dietCategories"></div>
+              <button class="diet-reset" id="dietReset" type="button">Clear</button>
+            </div>
+            <div class="food-grid" id="foodGrid"></div>
+            <div class="nutrition-summary">
+              <article><span>Calories</span><b id="totalCalories">0</b><small>kcal</small></article>
+              <article><span>Protein</span><b id="totalProtein">0</b><small>g</small></article>
+              <article><span>Carbs</span><b id="totalCarbs">0</b><small>g</small></article>
+              <article><span>Fat</span><b id="totalFat">0</b><small>g</small></article>
+              <article><span>Fiber</span><b id="totalFiber">0</b><small>g</small></article>
+            </div>
+            <div class="plate-tip" id="plateTip">अर्धी plate भाज्या, ¼ protein आणि ¼ whole grains असा smart balance ठेव.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="specialist" class="view">
+        <div class="section-heading"><div><span class="eyebrow">PCOD Specialist सह</span><h1>तुझ्या शंका, आम्ही सोप्या भाषेत</h1></div><p>धीर धर — योग्य समज आणि छोटे उपाय मदतीचे आहेत.</p></div>
+        <div class="specialist-layout">
+          <aside class="specialist-profile">
+            <div class="doctor-avatar"><span>DR</span><i>♡</i></div>
+            <h3>PCOD wellness साथी</h3>
+            <p>शंका, रिपोर्ट किंवा prescription सोप्या भाषेत समजून घेण्यासाठी तयार.</p>
+            <div class="doctor-note">ही सोय वैद्यकीय सल्ल्याची पर्यायी सेवा नाही. तीव्र/नवी symptom किंवा emergency मध्ये डॉक्टराला भेटा.</div>
+          </aside>
+          <div class="specialist-main">
+            <div class="specialist-tabs">
+              <button class="specialist-tab active" data-specialist-tab="questions">PCOD शंका</button>
+              <button class="specialist-tab" data-specialist-tab="report">रिपोर्ट / Prescription</button>
+            </div>
+
+            <div class="specialist-panel active" id="questionsPanel">
+              <div class="quick-questions">
+                <button type="button" data-question="मासिक पाळी अनियमित आहे">मासिक पाळी अनियमित</button>
+                <button type="button" data-question="चेहऱ्यावर पिंपल्स आहेत">पिंपल्स किंवा केस</button>
+                <button type="button" data-question="वजन कमी करायचे आहे">वजन कमी करणे</button>
+                <button type="button" data-question="मूड स्विंग्स आणि थकवा">मूड स्विंग्स</button>
+              </div>
+              <div class="specialist-chat" id="specialistChat" aria-live="polite">
+                <div class="specialist-message bot">आज कुठली चिंता सर्वात आधी मनात आहे ग? मासिक पाळी, वजन, केस, पिंपल्स किंवा report मधील शंका काहीही निःसंकोच लिहा.</div>
+              </div>
+              <form class="specialist-form" id="specialistForm">
+                <input id="specialistInput" type="text" placeholder="तुझी शंका सोप्या भाषेत लिही…" autocomplete="off" />
+                <button type="submit" aria-label="उत्तर मागा">➤</button>
+              </form>
+            </div>
+
+            <div class="specialist-panel" id="reportPanel">
+              <label class="upload-zone" id="uploadZone" for="reportUpload">
+                <span class="upload-icon">＋</span>
+                <b>रिपोर्ट किंवा prescription अपलोड करा</b>
+                <small>Image, PDF किंवा JPG / PNG — browserमध्येच preview</small>
+                <input id="reportUpload" type="file" accept="image/*,.pdf" multiple />
+              </label>
+              <div class="upload-previews" id="uploadPreviews"></div>
+              <article class="report-guide">
+                <h3>रिपोर्ट वाचताना मला काय सापडेल?</h3>
+                <ol>
+                  <li><b>Simple सारांश</b><span>रिपोर्टमध्ये काय लिहिले आहे</span></li>
+                  <li><b>Key findings</b><span>कोणते परिणाम अपेक्षित/बदलले आहेत</span></li>
+                  <li><b>Medicines</b><span>गोळी किंवा syrup कशासाठी दिली आहे</span></li>
+                  <li><b>पुढील उपाय</b><span>आहार, झोप आणि व्यायामातील छोटे बदल</span></li>
+                </ol>
+              </article>
+              <button class="report-analyze" id="reportAnalyze" type="button" disabled>रिपोर्टची दिशा पहा</button>
+              <div class="report-result" id="reportResult"></div>
+            </div>
+          </div>
+        </div>
+        <p class="medical-disclaimer">ही माहिती वैद्यकीय निदान किंवा prescription बदलण्यासाठी वापरू नका. औषध सुरू/बंद किंवा डोस बदलण्याआधी तुझ्या डॉक्टरांचा सल्ला घेणे आवश्यक आहे.</p>
+      </section>
+    </main>
+
+    <div class="modal-backdrop" id="messageModal" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true"><button class="modal-close" id="closeMessage" aria-label="बंद करा">×</button><span class="modal-heart">♡</span><h2>माझ्या खास सखीला</h2><p>हे दिवस नेहमी उजळलेले नाहीत, मग ते माझ्या प्राणसखीला, तू थोडी थकलीस का, आरोग्याचा प्रवास थोड़ा भारी वाटतोय का… तरीही तू <b>झुंज देत राहतेस.</b><br />मी तुझ्या शांत क्षणात, तुझ्या हास्यात आणि तुझ्या थकव्यातही नेहमी तुझ्यासोबत आहे. आज स्वतःला रागावू नकोस — झोप घे, पाणी प्या, हसू पाहू आणि पुढच्या क्षणाचा भरवसा ठेवा. तू पूर्ण तंदुरुस्त नाही असली तरी तू मोठी अपूर्णता नाहीस; तू सुंदर, प्रयत्नशील आणि नक्कीच <b>खूप लाडकी आहेस.</b><span>आपण हा प्रवास प्रेमाने, धीराने आणि एकत्र चालू ठेवू — मी नेहमी तुझ्यासोबत आहे. ♡</span></p><button class="primary-button" id="messageDone">हृदयापासून स्वीकारले ♡</button></div>
+    </div>
+    <div class="modal-backdrop" id="gameModal" aria-hidden="true">
+      <div class="modal game-modal" role="dialog" aria-modal="true"><button class="modal-close" id="closeGame" aria-label="बंद करा">×</button><div class="game-header"><span>फुलांचा खेळ</span><b id="gameScore">० / १०</b></div><div class="game-area" id="gameArea"></div><p class="game-tip">उडणाऱ्या फुलावर टॅप करा आणि काळजीचा भार हलका करा.</p></div>
+    </div>
+    <div class="modal-backdrop" id="hammerModal" aria-hidden="true">
+      <div class="modal game-modal hammer-modal" role="dialog" aria-modal="true"><button class="modal-close" id="closeHammerGame" aria-label="बंद करा">×</button><div class="game-header"><span>ताणावर प्रहार</span><b id="hammerScore">० / ८</b></div><div class="hammer-area" id="hammerArea"></div><p class="game-tip">प्रत्येक शब्दावर टॅप करा — खोटा भय, ताण किंवा चिंता आता फोडा.</p></div>
+    </div>
+    <div class="modal-backdrop open" id="authModal" aria-hidden="false">
+      <div class="modal auth-modal" role="dialog" aria-modal="true">
+        <div class="auth-visual" aria-hidden="true">
+          <span class="auth-flower flower-one">✿</span>
+          <span class="auth-flower flower-two">♡</span>
+          <div class="auth-orb">तुझ्यासाठी</div>
+        </div>
+        <div class="auth-content">
+        <span class="modal-heart">♡</span>
+        <h2 id="authTitle">तुझ्यासाठी स्वागत आहे</h2>
+        <p id="authSubtitle">तुझी सुरक्षित जागा — login करून पुढे जा.</p>
+        <form id="authForm">
+          <div class="auth-field register-only"><label for="authName">तुझे नाव</label><input id="authName" type="text" autocomplete="name" placeholder="उदा. प्रिया" /></div>
+          <div class="auth-field"><label for="authEmail">Email</label><input id="authEmail" type="email" autocomplete="email" placeholder="name@example.com" required /></div>
+          <div class="auth-field"><label for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="किमान 8 अक्षरे" required /><small class="password-hint">Password मध्ये letter, number आणि symbol (@#$!) असावा.</small></div>
+          <p class="auth-error" id="authError"></p>
+          <button class="primary-button" id="authSubmit" type="submit">Login करा</button>
+        </form>
+        <button class="auth-switch" id="authSwitch" type="button">नवीन account? Create account</button>
+        <button class="logout-button" id="logoutButton" type="button">Logout करा</button>
+        </div>
+      </div>
+    </div>
+    <div class="success-toast" id="successToast" role="status" aria-live="polite">
+      <span>♡</span><p id="successToastText"></p>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
