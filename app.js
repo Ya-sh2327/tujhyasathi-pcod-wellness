@@ -315,7 +315,6 @@ function downloadTrackerCsv(showMessage=true,submittedOnly=false){
 }
 
 document.getElementById("exportTracker").addEventListener("click",()=>downloadTrackerCsv(true));
-document.getElementById("submitExport").addEventListener("click",()=>downloadTrackerCsv(true));
 
 let toastTimer=null;
 function showSuccessToast(message){
