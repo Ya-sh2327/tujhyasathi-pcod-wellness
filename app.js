@@ -314,7 +314,7 @@ function downloadTrackerCsv(showMessage=true,submittedOnly=false){
   if(showMessage)showSuccessToast("सर्व नोंदी Excel workbookमध्ये download झाल्या.");
 }
 
-document.getElementById("exportTracker").addEventListener("click",()=>downloadTrackerCsv(true));
+document.getElementById("submitExport").addEventListener("click",()=>downloadTrackerCsv(true));
 
 let toastTimer=null;
 function showSuccessToast(message){
