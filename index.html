@@ -95,7 +95,7 @@
           <div class="tracker-main">
             <div class="tracker-toolbar">
               <label><span>दिनांक निवडा</span><input id="trackerDate" type="date" /></label>
-              <div class="tracker-actions"><div class="save-status" id="saveStatus">• तयार आहे</div><button class="export-button" id="exportTracker" type="button">Excel डाउनलोड ↓</button></div>
+              <div class="tracker-actions"><div class="save-status" id="saveStatus">• तयार आहे</div></div>
             </div>
             <div class="daily-fields">
               <article class="daily-card water-card">
@@ -243,13 +243,11 @@
         <h2 id="authTitle">तुझ्यासाठी स्वागत आहे</h2>
         <p id="authSubtitle">तुझी सुरक्षित जागा — login करून पुढे जा.</p>
         <form id="authForm">
-          <div class="auth-field register-only"><label for="authName">तुझे नाव</label><input id="authName" type="text" autocomplete="name" placeholder="उदा. प्रिया" /></div>
-          <div class="auth-field"><label for="authEmail">Email</label><input id="authEmail" type="email" autocomplete="email" placeholder="name@example.com" required /></div>
-          <div class="auth-field"><label for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="किमान 8 अक्षरे" required /><small class="password-hint">Password मध्ये letter, number आणि symbol (@#$!) असावा.</small></div>
+          <div class="auth-field"><label for="authName">User Name</label><input id="authName" type="text" autocomplete="username" placeholder="Hemangini Patil" required /></div>
+          <div class="auth-field"><label for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password" required /></div>
           <p class="auth-error" id="authError"></p>
           <button class="primary-button" id="authSubmit" type="submit">Login करा</button>
         </form>
-        <button class="auth-switch" id="authSwitch" type="button">नवीन account? Create account</button>
         <button class="logout-button" id="logoutButton" type="button">Logout करा</button>
         </div>
       </div>

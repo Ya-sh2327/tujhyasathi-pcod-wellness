@@ -176,10 +176,9 @@ trackerDate.value=localDateKey();
 
 function trackerProgress(entry){if(!entry)return 0;let score=0;if(Number(entry.water)>0)score++;if(entry.breakfast?.trim())score++;if(Number(entry.exercise)>0)score++;if(entry.lunch?.trim())score++;if(entry.dinner?.trim())score++;if(Number(entry.walk)>0)score++;return score}
 
-async function loadTrackerDate(){const key=trackerDate.value||localDateKey();let entry=trackerStore[key]||{};try{const response=await fetch(`/api/tracker/${key}`);if(response.ok){const data=await response.json();if(data.entry)entry={water:data.entry.water,breakfast:data.entry.breakfast,exercise:data.entry.exercise,lunch:data.entry.lunch,dinner:data.entry.dinner,walk:data.entry.walk,submitted:Boolean(data.entry.submitted)}}}catch(error){}trackerStore[key]=entry;trackerFields.forEach(id=>{const input=document.getElementById(id);const dataKey=id.replace("Input","");input.value=entry[dataKey]??(id==="waterInput"||id==="exerciseInput"||id==="walkInput"?0:"")});updateTrackerDateLabel();renderCalendar();updateSaveStatus()}
+function loadTrackerDate(){const key=trackerDate.value||localDateKey();const entry=trackerStore[key]||{};trackerFields.forEach(id=>{const input=document.getElementById(id);const dataKey=id.replace("Input","");input.value=entry[dataKey]??(id==="waterInput"||id==="exerciseInput"||id==="walkInput"?0:"")});updateTrackerDateLabel();renderCalendar();updateSaveStatus()}
 
-let saveTimer=null;
-function saveTrackerDate(){const key=trackerDate.value||localDateKey();const entry={submitted:Boolean(trackerStore[key]?.submitted)};trackerFields.forEach(id=>{const input=document.getElementById(id);entry[id.replace("Input","")]=input.type==="number"?Number(input.value||0):input.value.trim()});trackerStore[key]=entry;localStorage.setItem("tichyasathi-daily-tracker",JSON.stringify(trackerStore));updateSaveStatus();updateTrackerDateLabel();renderCalendar();clearTimeout(saveTimer);saveTimer=setTimeout(async()=>{try{const response=await fetch(`/api/tracker/${key}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(entry)});const status=document.getElementById("saveStatus");if(response.ok){status.textContent="• सुरक्षितपणे जतन झाले";status.className="save-status saved"}else if(response.status===401){openAuth()}}catch(error){const status=document.getElementById("saveStatus");status.textContent="• या उपकरणात जतन झाले"}},400)}
+function saveTrackerDate(){const key=trackerDate.value||localDateKey();const entry={submitted:Boolean(trackerStore[key]?.submitted)};trackerFields.forEach(id=>{const input=document.getElementById(id);entry[id.replace("Input","")]=input.type==="number"?Number(input.value||0):input.value.trim()});trackerStore[key]=entry;localStorage.setItem("tichyasathi-daily-tracker",JSON.stringify(trackerStore));updateSaveStatus();updateTrackerDateLabel();renderCalendar();const status=document.getElementById("saveStatus");status.textContent="• या उपकरणात जतन झाले";status.className="save-status saved"}
 
 function updateSaveStatus(){const key=trackerDate.value||localDateKey();const filled=trackerProgress(trackerStore[key]);const submitted=Boolean(trackerStore[key]?.submitted);const status=document.getElementById("saveStatus");const count=document.getElementById("submitCount");const hint=document.getElementById("submitHint");const button=document.getElementById("submitTracker");trackerFields.forEach(id=>{document.getElementById(id).disabled=submitted});document.querySelectorAll("[data-step]").forEach(control=>control.disabled=submitted);status.className=`save-status${filled?" saved":""}`;status.textContent=`• ${toMarathiNumber(filled)} / ६ पूर्ण`;count.textContent=`${toMarathiNumber(filled)} / ६ पूर्ण`;button.classList.toggle("submitted",submitted);if(submitted){button.textContent="Submit पूर्ण झाले ✓";button.disabled=true;hint.textContent="आजची नोंद submit झाली"}else{button.textContent="आजचा दिवस Submit करा ✓";button.disabled=filled!==6;hint.textContent=filled===6?"आता आजचा दिवस submit करा":"आजच्या सर्व नोंदी पूर्ण झाल्यावर submit करा"}}
 
@@ -203,74 +202,77 @@ document.getElementById("submitTracker").addEventListener("click",async()=>{
   if(trackerProgress(entry)!==6){showSuccessToast("Submit करण्यासाठी सर्व ६ नोंदी पूर्ण करा.");return}
   trackerStore[key]=entry;
   localStorage.setItem("tichyasathi-daily-tracker",JSON.stringify(trackerStore));
-  try{
-    const response=await fetch(`/api/tracker/${key}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(entry)});
-    if(!response.ok)throw new Error("submit failed");
-  }catch(error){}
   updateSaveStatus();renderCalendar();showSuccessToast("आजचा दिवस Submit झाला — सुंदर काळजी घेतलीस! ♡");
 });
 loadTrackerDate();
 
 const authModal=document.getElementById("authModal");
 const authForm=document.getElementById("authForm");
-const authSwitch=document.getElementById("authSwitch");
-let authMode="login";
 let currentUser=null;
 
 function openAuth(){authModal.classList.add("open");authModal.setAttribute("aria-hidden","false")}
 function closeAuth(){authModal.classList.remove("open");authModal.setAttribute("aria-hidden","true")}
-function setAuthMode(mode){authMode=mode;const modal=authModal.querySelector(".auth-modal");modal.classList.remove("logged-in");const register=mode==="register";modal.classList.toggle("register",register);document.getElementById("authTitle").textContent=register?"तुझ्यासाठी account तयार करा":"तुझ्यासाठी स्वागत आहे";document.getElementById("authSubtitle").textContent=register?"तुझी माहिती फक्त तुझ्याच accountमध्ये राहील":"तुझी सुरक्षित जागा — login करून पुढे जा.";document.getElementById("authSubmit").textContent=register?"Account तयार करा":"Login करा";authSwitch.textContent=register?"account आहे? Login करा":"नवीन account? Create account";document.getElementById("authPassword").autocomplete=register?"new-password":"current-password";document.getElementById("authError").textContent=""}
-authSwitch.addEventListener("click",()=>setAuthMode(authMode==="login"?"register":"login"));
-authForm.addEventListener("submit",async event=>{
-  event.preventDefault();
-  const name=document.getElementById("authName").value.trim();
-  const email=document.getElementById("authEmail").value.trim();
-  const password=document.getElementById("authPassword").value;
-  const error=document.getElementById("authError");
-  const submit=document.getElementById("authSubmit");
-  error.textContent="";
-  if(authMode==="register"){
-    if(password.length<8){error.textContent="Password किमान 8 अक्षरे असावे";return}
-    if(!/[A-Za-z]/.test(password)||!/\d/.test(password)||!/[^A-Za-z0-9]/.test(password)){error.textContent="Password मध्ये letter, number आणि symbol (@#$!) असावा";return}
-  }
-  submit.disabled=true;
-  submit.classList.add("loading");
-  submit.textContent=authMode==="register"?"Account तयार होत आहे…":"Login होत आहे…";
-  try{
-    const response=await fetch(`/api/${authMode==="register"?"register":"login"}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,email,password})});
-    const data=await response.json();
-    if(!response.ok){error.textContent=data.error||"काहीतरी चुकले";submit.disabled=false;submit.classList.remove("loading");submit.textContent=authMode==="register"?"Account तयार करा":"Login करा";return}
-    currentUser=data.user;
-    showLoggedInState();
-    closeAuth();
-    showSuccessToast(authMode==="register"?"Account successfully तयार झाले! आता login वापरून app सुरू करा.":"Login successful — welcome back!");
-    loadTrackerDate();
-  }catch(fetchError){error.textContent="Server चालू करणे आवश्यक आहे"}
-  finally{
-    submit.disabled=false;
-    submit.classList.remove("loading");
-  }
-});
-
-async function checkSession(){try{const response=await fetch("/api/me");if(response.ok){const data=await response.json();currentUser=data.user;document.getElementById("profileInitial").textContent=currentUser.name[0].toUpperCase();showLoggedInState();closeAuth()}else openAuth()}catch(error){openAuth()}}
-checkSession();
-
 function showLoggedInState(){
   const modal=authModal.querySelector(".auth-modal");
+  modal.classList.remove("register");
   modal.classList.add("logged-in");
   document.getElementById("authTitle").textContent=`स्वागत आहे, ${currentUser.name}`;
-  document.getElementById("authSubtitle").textContent="तुझी माहिती आणि आजच्या नोंदी सुरक्षित आहेत.";
+  document.getElementById("authSubtitle").textContent="तुझी सुरक्षित जागा तयार आहे.";
   document.getElementById("profileInitial").textContent=currentUser.name[0].toUpperCase();
 }
 function showLoggedOutState(){
   const modal=authModal.querySelector(".auth-modal");
   modal.classList.remove("logged-in");
-  setAuthMode("login");
+  document.getElementById("authTitle").textContent="तुझ्यासाठी स्वागत आहे";
+  document.getElementById("authSubtitle").textContent="तुझी सुरक्षित जागा — login करून पुढे जा.";
   document.getElementById("authName").value="";
-  document.getElementById("authEmail").value="";
   document.getElementById("authPassword").value="";
+  document.getElementById("authError").textContent="";
 }
-document.getElementById("profileButton").addEventListener("click",()=>{if(!currentUser){showLoggedOutState();openAuth();return}showLoggedInState();openAuth()});
+
+authForm.addEventListener("submit",async event=>{
+  event.preventDefault();
+  const username=document.getElementById("authName").value.trim();
+  const password=document.getElementById("authPassword").value;
+  const error=document.getElementById("authError");
+  const submit=document.getElementById("authSubmit");
+  error.textContent="";
+  submit.disabled=true;
+  submit.classList.add("loading");
+  submit.textContent="Login होत आहे…";
+  try{
+    const response=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username,password})});
+    const data=await response.json();
+    if(!response.ok){error.textContent=data.error||"काहीतरी चुकले";return}
+    currentUser=data.user;
+    showLoggedInState();
+    closeAuth();
+    showSuccessToast("Login successful — welcome back!");
+  }catch(fetchError){error.textContent="Server चालू करणे आवश्यक आहे"}
+  finally{
+    submit.disabled=false;
+    submit.classList.remove("loading");
+    submit.textContent="Login करा";
+  }
+});
+
+async function checkSession(){
+  try{
+    const response=await fetch("/api/me");
+    if(response.ok){
+      const data=await response.json();
+      currentUser=data.user;
+      showLoggedInState();
+      closeAuth();
+    }else openAuth();
+  }catch(error){openAuth()}
+}
+checkSession();
+
+document.getElementById("profileButton").addEventListener("click",()=>{
+  if(!currentUser){showLoggedOutState();openAuth();return}
+  showLoggedInState();openAuth();
+});
 document.getElementById("logoutButton").addEventListener("click",async()=>{
   try{await fetch("/api/logout",{method:"POST"})}catch(error){}
   currentUser=null;
@@ -288,8 +290,6 @@ function showSuccessToast(message){
   clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>toast.classList.remove("show"),3200);
 }
-
-document.getElementById("exportTracker").addEventListener("click",()=>{if(!currentUser){openAuth();return}window.location.href="/api/export"});
 
 const foods=[
   {id:"rice",category:"Grains",name:"साधा भात",icon:"🍚",serving:"150 g शिजलेला भात",qtyLabel:"बाऊल",step:0.5,calories:195,protein:4.3,carbs:42.2,fat:0.4,fiber:0.6},
