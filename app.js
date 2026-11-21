@@ -207,6 +207,72 @@ document.getElementById("submitTracker").addEventListener("click",()=>{
 });
 loadTrackerDate();
 
+function createXlsxBlob(rows){
+  const encoder=new TextEncoder();
+  const escapeXml=value=>String(value??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  const columnLetter=index=>{
+    let value=index+1,name="";
+    while(value>0){value--;name=String.fromCharCode(65+(value%26))+name;value=Math.floor(value/26)}
+    return name;
+  };
+  const sheetRows=rows.map((row,rowIndex)=>{
+    const cells=row.map((value,columnIndex)=>{
+      const ref=`${columnLetter(columnIndex)}${rowIndex+1}`;
+      if(typeof value==="number"){
+        return `<c r="${ref}"><v>${value}</v></c>`;
+      }
+      return `<c r="${ref}" t="inlineStr"><is><t xml:space="preserve">${escapeXml(value)}</t></is></c>`;
+    }).join("");
+    return `<row r="${rowIndex+1}">${cells}</row>`;
+  }).join("");
+  const sheetXml=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`+
+    `<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${sheetRows}</sheetData></worksheet>`;
+  const workbookXml=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`+
+    `<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Daily Tracker" sheetId="1" r:id="rId1"/></sheets></workbook>`;
+  const workbookRels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`+
+    `<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>`;
+  const rootRels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`+
+    `<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`;
+  const contentTypes=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`+
+    `<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>`;
+  const files=[
+    ["[Content_Types].xml",contentTypes],
+    ["_rels/.rels",rootRels],
+    ["xl/workbook.xml",workbookXml],
+    ["xl/_rels/workbook.xml.rels",workbookRels],
+    ["xl/worksheets/sheet1.xml",sheetXml]
+  ];
+
+  const crcTable=new Uint32Array(256);
+  for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?(0xedb88320^(c>>>1)):(c>>>1);crcTable[n]=c>>>0}
+  function crc32(bytes){let c=0xffffffff;for(let i=0;i<bytes.length;i++)c=crcTable[(c^bytes[i])&255]^(c>>>8);return (c^0xffffffff)>>>0}
+  const concat=(arrays)=>{
+    const length=arrays.reduce((sum,array)=>sum+array.length,0);
+    const result=new Uint8Array(length);let offset=0;
+    arrays.forEach(array=>{result.set(array,offset);offset+=array.length});return result;
+  };
+  const writeUint16=(view,offset,value)=>view.setUint16(offset,value,true);
+  const writeUint32=(view,offset,value)=>view.setUint32(offset,value,true);
+  const localParts=[];const centralParts=[];let offset=0;
+  files.forEach(([name,content])=>{
+    const nameBytes=encoder.encode(name);const dataBytes=encoder.encode(content);const crc=crc32(dataBytes);
+    const local=new Uint8Array(30+nameBytes.length);const lv=new DataView(local.buffer);
+    writeUint32(lv,0,0x04034b50);writeUint16(lv,4,20);writeUint16(lv,6,0);writeUint16(lv,8,0);writeUint16(lv,10,0);writeUint16(lv,12,0);
+    writeUint32(lv,14,crc);writeUint32(lv,18,dataBytes.length);writeUint32(lv,22,dataBytes.length);writeUint16(lv,26,nameBytes.length);writeUint16(lv,28,0);local.set(nameBytes,30);
+    localParts.push(local,dataBytes);
+
+    const central=new Uint8Array(46+nameBytes.length);const cv=new DataView(central.buffer);
+    writeUint32(cv,0,0x02014b50);writeUint16(cv,4,20);writeUint16(cv,6,20);writeUint16(cv,8,0);writeUint16(cv,10,0);writeUint16(cv,12,0);writeUint16(cv,14,0);
+    writeUint32(cv,16,crc);writeUint32(cv,20,dataBytes.length);writeUint32(cv,24,dataBytes.length);writeUint16(cv,28,nameBytes.length);writeUint16(cv,30,0);writeUint16(cv,32,0);writeUint16(cv,34,0);writeUint16(cv,36,0);writeUint32(cv,38,0);writeUint32(cv,42,offset);
+    central.set(nameBytes,46);centralParts.push(central);
+    offset+=local.length+dataBytes.length;
+  });
+  const centralDirectory=concat(centralParts);const endOffset=offset+centralDirectory.length;
+  const end=new Uint8Array(22);const ev=new DataView(end.buffer);
+  writeUint32(ev,0,0x06054b50);writeUint16(ev,4,0);writeUint16(ev,6,0);writeUint16(ev,8,files.length);writeUint16(ev,10,files.length);writeUint32(ev,12,centralDirectory.length);writeUint32(ev,16,offset);writeUint16(ev,20,0);
+  return new Blob([concat([concat(localParts),centralDirectory,end])],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+}
+
 function downloadTrackerCsv(showMessage=true,submittedOnly=false){
   const headers=["तारीख","Submit स्थिती","Submit तारीख","Submit वेळ","पाणी (लीटर)","नाश्ता","व्यायाम (मिनिटे)","लंच","डिनर","चालणे (Steps)"];
   const rows=[headers];
@@ -230,20 +296,16 @@ function downloadTrackerCsv(showMessage=true,submittedOnly=false){
       entry.walk??0
     ]);
   });
-  const csv="\ufeff"+rows.map(row=>row.map(value=>{
-    const text=String(value??"");
-    return /[",\n]/.test(text)?`"${text.replace(/"/g,'""')}"`:text;
-  }).join(",")).join("\n");
-  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const blob=createXlsxBlob(rows);
   const url=URL.createObjectURL(blob);
   const link=document.createElement("a");
   link.href=url;
-  link.download=`daily-tracker-${localDateKey()}.csv`;
+  link.download=`daily-tracker-${localDateKey()}.xlsx`;
   document.body.appendChild(link);
   link.click();
   link.remove();
   setTimeout(()=>URL.revokeObjectURL(url),1000);
-  if(showMessage)showSuccessToast("सर्व नोंदी Excel-compatible CSVमध्ये download झाल्या.");
+  if(showMessage)showSuccessToast("सर्व नोंदी Excel workbookमध्ये download झाल्या.");
 }
 
 document.getElementById("exportTracker").addEventListener("click",()=>downloadTrackerCsv(true));
