@@ -64,7 +64,20 @@ setInterval(()=>{
     setAffirmation(affirmationSeed(affirmationDateKey)%affirmations.length,true);
   }
 },60000);
-document.querySelectorAll(".nav-tab").forEach(tab=>tab.addEventListener("click",()=>showSection(tab.dataset.section)));
+const mobileMenuButton=document.getElementById("mobileMenuButton");
+const mobileNavTabs=document.querySelector(".nav-tabs");
+if(mobileMenuButton&&mobileNavTabs){
+  mobileMenuButton.addEventListener("click",()=>{
+    const open=mobileNavTabs.classList.toggle("mobile-open");
+    mobileMenuButton.classList.toggle("open",open);
+    mobileMenuButton.setAttribute("aria-expanded",open?"true":"false");
+  });
+}
+document.querySelectorAll(".nav-tab").forEach(tab=>tab.addEventListener("click",()=>{
+  showSection(tab.dataset.section);
+  if(mobileNavTabs){mobileNavTabs.classList.remove("mobile-open")}
+  if(mobileMenuButton){mobileMenuButton.classList.remove("open");mobileMenuButton.setAttribute("aria-expanded","false")}
+}));
 document.querySelectorAll("[data-go]").forEach(card=>card.addEventListener("click",()=>showSection(card.dataset.go)));
 function showSection(id){document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));document.querySelectorAll(".nav-tab").forEach(t=>t.classList.toggle("active",t.dataset.section===id));document.getElementById(id).classList.add("active");window.scrollTo({top:0,behavior:"smooth"})}
 
