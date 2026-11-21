@@ -169,6 +169,12 @@ function showHammerComplete(){
 const trackerDate=document.getElementById("trackerDate");
 const trackerFields=["waterInput","breakfastInput","exerciseInput","lunchInput","dinnerInput","walkInput"];
 const trackerStore=JSON.parse(localStorage.getItem("tichyasathi-daily-tracker")||"{}");
+const trackerResetKey="tichyasathi-reset-2026-11-22";
+if(!localStorage.getItem(trackerResetKey)){
+  delete trackerStore["2026-11-22"];
+  localStorage.setItem("tichyasathi-daily-tracker",JSON.stringify(trackerStore));
+  localStorage.setItem(trackerResetKey,"done");
+}
 let calendarCursor=new Date();
 
 function localDateKey(date=new Date()){const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");return `${y}-${m}-${d}`}
