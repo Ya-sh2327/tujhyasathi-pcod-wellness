@@ -22,7 +22,7 @@
           <button class="nav-tab" data-section="dietfriend">Diet Chart</button>
           <button class="nav-tab" data-section="specialist">PCOD साथी</button>
         </nav>
-        <button class="profile-button" id="profileButton" aria-label="प्रोफाइल"><span id="profileInitial">♡</span></button>
+        <div class="profile-button" aria-label="तुझ्यासाठी"><span>♡</span></div>
       </header>
 
       <section id="today" class="view active">
@@ -95,7 +95,7 @@
           <div class="tracker-main">
             <div class="tracker-toolbar">
               <label><span>दिनांक निवडा</span><input id="trackerDate" type="date" /></label>
-              <div class="tracker-actions"><div class="save-status" id="saveStatus">• तयार आहे</div></div>
+              <div class="tracker-actions"><div class="save-status" id="saveStatus">• तयार आहे</div><button class="export-button" id="exportTracker" type="button">Excel डाउनलोड ↓</button></div>
             </div>
             <div class="daily-fields">
               <article class="daily-card water-card">
@@ -230,27 +230,6 @@
     </div>
     <div class="modal-backdrop" id="hammerModal" aria-hidden="true">
       <div class="modal game-modal hammer-modal" role="dialog" aria-modal="true"><button class="modal-close" id="closeHammerGame" aria-label="बंद करा">×</button><div class="game-header"><span>ताणावर प्रहार</span><b id="hammerScore">० / ८</b></div><div class="hammer-area" id="hammerArea"></div><p class="game-tip">प्रत्येक शब्दावर टॅप करा — खोटा भय, ताण किंवा चिंता आता फोडा.</p></div>
-    </div>
-    <div class="modal-backdrop open" id="authModal" aria-hidden="false">
-      <div class="modal auth-modal" role="dialog" aria-modal="true">
-        <div class="auth-visual" aria-hidden="true">
-          <span class="auth-flower flower-one">✿</span>
-          <span class="auth-flower flower-two">♡</span>
-          <div class="auth-orb">तुझ्यासाठी</div>
-        </div>
-        <div class="auth-content">
-        <span class="modal-heart">♡</span>
-        <h2 id="authTitle">तुझ्यासाठी स्वागत आहे</h2>
-        <p id="authSubtitle">तुझी सुरक्षित जागा — login करून पुढे जा.</p>
-        <form id="authForm">
-          <div class="auth-field"><label for="authName">User Name</label><input id="authName" type="text" autocomplete="username" placeholder="Hemangini Patil" required /></div>
-          <div class="auth-field"><label for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password" required /></div>
-          <p class="auth-error" id="authError"></p>
-          <button class="primary-button" id="authSubmit" type="submit">Login करा</button>
-        </form>
-        <button class="logout-button" id="logoutButton" type="button">Logout करा</button>
-        </div>
-      </div>
     </div>
     <div class="success-toast" id="successToast" role="status" aria-live="polite">
       <span>♡</span><p id="successToastText"></p>

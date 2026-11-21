@@ -194,10 +194,10 @@ function updateCalendarSummary(){const year=calendarCursor.getFullYear(),month=c
 
 document.getElementById("calendarPrev").addEventListener("click",()=>{calendarCursor.setMonth(calendarCursor.getMonth()-1);renderCalendar()});
 document.getElementById("calendarNext").addEventListener("click",()=>{calendarCursor.setMonth(calendarCursor.getMonth()+1);renderCalendar()});
-document.getElementById("submitTracker").addEventListener("click",async()=>{
-  if(!currentUser){openAuth();return}
+document.getElementById("submitTracker").addEventListener("click",()=>{
   const key=trackerDate.value||localDateKey();
-  const entry={submitted:true};
+  const now=new Date();
+  const entry={submitted:true,submittedDate:key,submittedAt:now.toISOString(),submittedTime:now.toLocaleString("mr-IN",{hour:"2-digit",minute:"2-digit",second:"2-digit"})};
   trackerFields.forEach(id=>{const input=document.getElementById(id);entry[id.replace("Input","")]=input.type==="number"?Number(input.value||0):input.value.trim()});
   if(trackerProgress(entry)!==6){showSuccessToast("Submit करण्यासाठी सर्व ६ नोंदी पूर्ण करा.");return}
   trackerStore[key]=entry;
@@ -206,76 +206,43 @@ document.getElementById("submitTracker").addEventListener("click",async()=>{
 });
 loadTrackerDate();
 
-const authModal=document.getElementById("authModal");
-const authForm=document.getElementById("authForm");
-let currentUser=null;
-
-function openAuth(){authModal.classList.add("open");authModal.setAttribute("aria-hidden","false")}
-function closeAuth(){authModal.classList.remove("open");authModal.setAttribute("aria-hidden","true")}
-function showLoggedInState(){
-  const modal=authModal.querySelector(".auth-modal");
-  modal.classList.remove("register");
-  modal.classList.add("logged-in");
-  document.getElementById("authTitle").textContent=`स्वागत आहे, ${currentUser.name}`;
-  document.getElementById("authSubtitle").textContent="तुझी सुरक्षित जागा तयार आहे.";
-  document.getElementById("profileInitial").textContent=currentUser.name[0].toUpperCase();
-}
-function showLoggedOutState(){
-  const modal=authModal.querySelector(".auth-modal");
-  modal.classList.remove("logged-in");
-  document.getElementById("authTitle").textContent="तुझ्यासाठी स्वागत आहे";
-  document.getElementById("authSubtitle").textContent="तुझी सुरक्षित जागा — login करून पुढे जा.";
-  document.getElementById("authName").value="";
-  document.getElementById("authPassword").value="";
-  document.getElementById("authError").textContent="";
-}
-
-authForm.addEventListener("submit",event=>{
-  event.preventDefault();
-  const username=document.getElementById("authName").value.trim();
-  const password=document.getElementById("authPassword").value;
-  const error=document.getElementById("authError");
-  const submit=document.getElementById("authSubmit");
-  error.textContent="";
-  submit.disabled=true;
-  submit.classList.add("loading");
-  submit.textContent="Login होत आहे…";
-  setTimeout(()=>{
-    if(username==="Hemangini Patil"&&password==="Hemangini@2327"){
-      currentUser={name:"Hemangini Patil"};
-      localStorage.setItem("tichyasathi-login","true");
-      showLoggedInState();
-      closeAuth();
-      showSuccessToast("Login successful — welcome back!");
-    }else{
-      error.textContent="Username किंवा Password चुकीचे आहे";
+document.getElementById("exportTracker").addEventListener("click",()=>{
+  const headers=["तारीख","Submit स्थिती","Submit तारीख","Submit वेळ","पाणी (लीटर)","नाश्ता","व्यायाम (मिनिटे)","लंच","डिनर","चालणे (Steps)"];
+  const rows=[headers];
+  Object.keys(trackerStore).sort().forEach(date=>{
+    const entry=trackerStore[date];
+    const submittedDate=entry.submittedDate||date;
+    let submittedTime=entry.submittedTime||"";
+    if(entry.submittedAt&&!submittedTime){
+      submittedTime=new Date(entry.submittedAt).toLocaleString("mr-IN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
     }
-    submit.disabled=false;
-    submit.classList.remove("loading");
-    submit.textContent="Login करा";
-  },350);
-});
-
-function checkSession(){
-  if(localStorage.getItem("tichyasathi-login")==="true"){
-    currentUser={name:"Hemangini Patil"};
-    showLoggedInState();
-    closeAuth();
-  }else openAuth();
-}
-checkSession();
-
-document.getElementById("profileButton").addEventListener("click",()=>{
-  if(!currentUser){showLoggedOutState();openAuth();return}
-  showLoggedInState();openAuth();
-});
-document.getElementById("logoutButton").addEventListener("click",()=>{
-  localStorage.removeItem("tichyasathi-login");
-  currentUser=null;
-  document.getElementById("profileInitial").textContent="♡";
-  showLoggedOutState();
-  openAuth();
-  showSuccessToast("तू सुरक्षितपणे logout झालीस.");
+    rows.push([
+      date,
+      entry.submitted?"Submit झाले":"अपूर्ण",
+      entry.submitted?submittedDate:"",
+      entry.submitted?submittedTime:"",
+      entry.water??0,
+      entry.breakfast||"",
+      entry.exercise??0,
+      entry.lunch||"",
+      entry.dinner||"",
+      entry.walk??0
+    ]);
+  });
+  const csv="\ufeff"+rows.map(row=>row.map(value=>{
+    const text=String(value??"");
+    return /[",\n]/.test(text)?`"${text.replace(/"/g,'""')}"`:text;
+  }).join(",")).join("\n");
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;
+  link.download=`daily-tracker-${localDateKey()}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  showSuccessToast("सर्व नोंदी Excel-compatible CSVमध्ये download झाल्या.");
 });
 
 let toastTimer=null;
