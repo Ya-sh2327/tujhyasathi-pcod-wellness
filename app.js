@@ -230,7 +230,7 @@ function showLoggedOutState(){
   document.getElementById("authError").textContent="";
 }
 
-authForm.addEventListener("submit",async event=>{
+authForm.addEventListener("submit",event=>{
   event.preventDefault();
   const username=document.getElementById("authName").value.trim();
   const password=document.getElementById("authPassword").value;
@@ -240,32 +240,28 @@ authForm.addEventListener("submit",async event=>{
   submit.disabled=true;
   submit.classList.add("loading");
   submit.textContent="Login होत आहे…";
-  try{
-    const response=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username,password})});
-    const data=await response.json();
-    if(!response.ok){error.textContent=data.error||"काहीतरी चुकले";return}
-    currentUser=data.user;
-    showLoggedInState();
-    closeAuth();
-    showSuccessToast("Login successful — welcome back!");
-  }catch(fetchError){error.textContent="Server चालू करणे आवश्यक आहे"}
-  finally{
+  setTimeout(()=>{
+    if(username==="Hemangini Patil"&&password==="Hemangini@2327"){
+      currentUser={name:"Hemangini Patil"};
+      localStorage.setItem("tichyasathi-login","true");
+      showLoggedInState();
+      closeAuth();
+      showSuccessToast("Login successful — welcome back!");
+    }else{
+      error.textContent="Username किंवा Password चुकीचे आहे";
+    }
     submit.disabled=false;
     submit.classList.remove("loading");
     submit.textContent="Login करा";
-  }
+  },350);
 });
 
-async function checkSession(){
-  try{
-    const response=await fetch("/api/me");
-    if(response.ok){
-      const data=await response.json();
-      currentUser=data.user;
-      showLoggedInState();
-      closeAuth();
-    }else openAuth();
-  }catch(error){openAuth()}
+function checkSession(){
+  if(localStorage.getItem("tichyasathi-login")==="true"){
+    currentUser={name:"Hemangini Patil"};
+    showLoggedInState();
+    closeAuth();
+  }else openAuth();
 }
 checkSession();
 
@@ -273,8 +269,8 @@ document.getElementById("profileButton").addEventListener("click",()=>{
   if(!currentUser){showLoggedOutState();openAuth();return}
   showLoggedInState();openAuth();
 });
-document.getElementById("logoutButton").addEventListener("click",async()=>{
-  try{await fetch("/api/logout",{method:"POST"})}catch(error){}
+document.getElementById("logoutButton").addEventListener("click",()=>{
+  localStorage.removeItem("tichyasathi-login");
   currentUser=null;
   document.getElementById("profileInitial").textContent="♡";
   showLoggedOutState();
