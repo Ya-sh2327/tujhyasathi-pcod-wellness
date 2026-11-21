@@ -202,14 +202,15 @@ document.getElementById("submitTracker").addEventListener("click",()=>{
   if(trackerProgress(entry)!==6){showSuccessToast("Submit करण्यासाठी सर्व ६ नोंदी पूर्ण करा.");return}
   trackerStore[key]=entry;
   localStorage.setItem("tichyasathi-daily-tracker",JSON.stringify(trackerStore));
-  updateSaveStatus();renderCalendar();showSuccessToast("आजचा दिवस Submit झाला — सुंदर काळजी घेतलीस! ♡");
+  updateSaveStatus();renderCalendar();showSuccessToast("आजचा दिवस Submit झाला — सर्व नोंदी Excel fileमध्ये download होत आहेत.");
+  downloadTrackerCsv(false,true);
 });
 loadTrackerDate();
 
-document.getElementById("exportTracker").addEventListener("click",()=>{
+function downloadTrackerCsv(showMessage=true,submittedOnly=false){
   const headers=["तारीख","Submit स्थिती","Submit तारीख","Submit वेळ","पाणी (लीटर)","नाश्ता","व्यायाम (मिनिटे)","लंच","डिनर","चालणे (Steps)"];
   const rows=[headers];
-  Object.keys(trackerStore).sort().forEach(date=>{
+  Object.keys(trackerStore).sort().filter(date=>!submittedOnly||trackerStore[date]?.submitted).forEach(date=>{
     const entry=trackerStore[date];
     const submittedDate=entry.submittedDate||date;
     let submittedTime=entry.submittedTime||"";
@@ -242,8 +243,10 @@ document.getElementById("exportTracker").addEventListener("click",()=>{
   link.click();
   link.remove();
   setTimeout(()=>URL.revokeObjectURL(url),1000);
-  showSuccessToast("सर्व नोंदी Excel-compatible CSVमध्ये download झाल्या.");
-});
+  if(showMessage)showSuccessToast("सर्व नोंदी Excel-compatible CSVमध्ये download झाल्या.");
+}
+
+document.getElementById("exportTracker").addEventListener("click",()=>downloadTrackerCsv(true));
 
 let toastTimer=null;
 function showSuccessToast(message){
